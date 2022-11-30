@@ -1,2 +1,20 @@
 *.class
 *.log
+
+/.bsp/
+jdk
+.local
+build
+dist/*
+target/
+
+.idea
+.idea_modules
+/.worksheet/
+
+# vscode
+.vscode
+
+**/.metals
+**/.bloop
+**/metals.sbt
