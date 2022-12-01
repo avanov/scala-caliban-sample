@@ -48,10 +48,11 @@ final case class Item
     ,   valC: String
     )
 
+final case class Wrap(inner: List[Item])
 
 final case class Query
     (   item:   ItemInput   => ZIO[Any, Throwable, Item]
-    ,   items:  ItemsInput  => ZIO[Any, Throwable, List[Item]]
+    ,   items:  ItemsInput  => ZIO[Any, Throwable, Wrap]
     )
 
 
@@ -62,8 +63,8 @@ def getItem(args: ItemInput): ZIO[Any, Throwable, Item] =
     ZIO.succeed(phonyItem)
 
 
-def getItems(args: ItemsInput): ZIO[Any, Throwable, List[Item]] =
-    ZIO.succeed(List(phonyItem))
+def getItems(args: ItemsInput): ZIO[Any, Throwable, Wrap] =
+    ZIO.succeed(Wrap(List(phonyItem)))
 
 
 private val queries = Query
@@ -109,4 +110,4 @@ private val federatedApi        = api @@ withFederation
 
 // TODO: BUG? replace `api.` with `federatedApi.` and the test suite will fail with:
 //       caliban.CalibanError$ValidationError: ValidationError Error: Union _Entity contains the following non Object types: .
-val resolver            = api.interpreter
+val resolver            = federatedApi.interpreter
