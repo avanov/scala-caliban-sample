@@ -95,18 +95,9 @@ private val withFederation: GraphQLAspect[Nothing, Any] = federated
                         .mapError   (federationFail("Federated Item query failed"))
                         .map        (federationSuccess)
             )
-    ,   EntityResolver.from[ItemsInput]
-            (   (args: ItemsInput) =>
-                    ZQuery
-                        .fromZIO    (getItems(args))
-                        .mapError   (federationFail("Federated Items query failed"))
-                        .map        (federationSuccess)
-            )
-)
+    )
 
 private val api: GraphQL[Any]   = graphQL[Any, Query, Unit, Unit](RootResolver(queries))
 private val federatedApi        = api @@ withFederation
 
-// TODO: BUG? replace `api.` with `federatedApi.` and the test suite will fail with:
-//       caliban.CalibanError$ValidationError: ValidationError Error: Union _Entity contains the following non Object types: .
-val resolver            = api.interpreter
+val resolver                    = federatedApi.interpreter
